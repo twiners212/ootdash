@@ -117,7 +117,7 @@ export default function Dashboard() {
       {/* Footer */}
       {lastFetched && (
         <footer className="w-full max-w-6xl mt-8 text-center text-outline/40 text-xs font-pixel">
-          Last updated: {new Date(lastFetched).toLocaleTimeString('id-ID')}
+          Last updated: {new Date(lastFetched).toLocaleTimeString('id-ID').replace(/\./g, ':')}
         </footer>
       )}
 

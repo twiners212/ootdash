@@ -14,9 +14,9 @@ export default function WeatherInfo() {
         <h2 className="text-2xl font-bold uppercase tracking-widest">{weather.locationName}</h2>
       </div>
       
-      <div className="flex items-center justify-center my-6">
-        <CloudSun size={64} className="text-accent drop-shadow-md mr-4" />
-        <span className="text-8xl font-pixel text-primary drop-shadow-[4px_4px_0_rgba(26,43,69,1)]">
+      <div className="flex items-center justify-center my-4 sm:my-6 w-full overflow-hidden">
+        <CloudSun className="w-12 h-12 sm:w-16 sm:h-16 text-accent drop-shadow-md mr-2 sm:mr-4 flex-shrink-0" />
+        <span className="text-6xl sm:text-8xl font-pixel text-primary drop-shadow-[4px_4px_0_rgba(26,43,69,1)]">
           {weather.temperature}°
         </span>
       </div>
