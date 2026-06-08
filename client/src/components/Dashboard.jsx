@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { useAuthStore } from '../store/useAuthStore';
+import useGeolocation from '../hooks/useGeolocation';
 import Mannequin from './Mannequin';
 import WeatherInfo from './WeatherInfo';
 import RecommendationList from './RecommendationList';
@@ -13,22 +14,7 @@ const DEFAULT_LON = 110.5084;
 export default function Dashboard() {
   const { fetchDashboardData, isLoading, error, clearError, lastFetched } = useDashboardStore();
   const { user, signOut } = useAuthStore();
-  const [coords, setCoords] = useState({ lat: DEFAULT_LAT, lon: DEFAULT_LON });
-
-  // Try to get user's real location on mount
-  useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        },
-        (err) => {
-          console.warn('[Geo] Location access denied, using default (Salatiga):', err.message);
-        },
-        { enableHighAccuracy: false, timeout: 5000 }
-      );
-    }
-  }, []);
+  const coords = useGeolocation(DEFAULT_LAT, DEFAULT_LON);
 
   // Fetch data whenever coords change
   useEffect(() => {

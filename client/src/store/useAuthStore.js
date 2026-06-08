@@ -5,8 +5,7 @@ export const useAuthStore = create((set, get) => ({
   user: null,
   session: null,
   isAuthenticated: false,
-  isLoading: true, // Start as loading to check existing session
-  error: null,
+  isOffline: false,
 
   /**
    * Initialize auth state — call once on app mount.
@@ -14,8 +13,39 @@ export const useAuthStore = create((set, get) => ({
    */
   initialize: async () => {
     try {
-      // Check for existing session
+      console.log('[Auth] Checking connection to Supabase...');
+      // Simple connectivity check with 1.5s timeout
+      const isOnline = await Promise.race([
+        fetch('http://127.0.0.1:54321/auth/v1/health')
+          .then(() => true)
+          .catch(() => false),
+        new Promise((resolve) => setTimeout(() => resolve(false), 1500))
+      ]);
+
+      if (!isOnline) {
+        console.warn('[Auth] Supabase is offline. Enabling Demo Mode.');
+        set({ isOffline: true });
+        
+        // Restore demo session if it exists
+        const isDemoLoggedIn = localStorage.getItem('ootdash_demo_session') === 'true';
+        const demoEmail = localStorage.getItem('ootdash_demo_email') || 'demo@ootdash.local';
+        
+        if (isDemoLoggedIn) {
+          set({
+            user: { email: demoEmail, id: 'demo-uuid-1234' },
+            session: { access_token: 'demo-access-token', user: { email: demoEmail } },
+            isAuthenticated: true,
+            isLoading: false
+          });
+        } else {
+          set({ isLoading: false });
+        }
+        return;
+      }
+
+      console.log('[Auth] getSession started');
       const { data: { session }, error } = await supabase.auth.getSession();
+      console.log('[Auth] getSession finished:', { session, error });
       
       if (error) throw error;
 
@@ -33,6 +63,9 @@ export const useAuthStore = create((set, get) => ({
       // Subscribe to auth state changes (login, logout, token refresh)
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         (_event, session) => {
+          // Skip state updates if we've switched to offline mode in the meantime
+          if (get().isOffline) return;
+          
           set({
             user: session?.user || null,
             session: session || null,
@@ -54,6 +87,21 @@ export const useAuthStore = create((set, get) => ({
    */
   signUp: async (email, password) => {
     set({ isLoading: true, error: null });
+
+    if (get().isOffline) {
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Simulate delay
+      localStorage.setItem('ootdash_demo_session', 'true');
+      localStorage.setItem('ootdash_demo_email', email);
+      const mockUser = { email, id: 'demo-uuid-1234' };
+      set({
+        user: mockUser,
+        session: { access_token: 'demo-access-token', user: mockUser },
+        isAuthenticated: true,
+        isLoading: false
+      });
+      return { success: true, user: mockUser };
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -81,6 +129,21 @@ export const useAuthStore = create((set, get) => ({
    */
   signIn: async (email, password) => {
     set({ isLoading: true, error: null });
+
+    if (get().isOffline) {
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Simulate delay
+      localStorage.setItem('ootdash_demo_session', 'true');
+      localStorage.setItem('ootdash_demo_email', email);
+      const mockUser = { email, id: 'demo-uuid-1234' };
+      set({
+        user: mockUser,
+        session: { access_token: 'demo-access-token', user: mockUser },
+        isAuthenticated: true,
+        isLoading: false
+      });
+      return { success: true };
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -108,6 +171,20 @@ export const useAuthStore = create((set, get) => ({
    */
   signOut: async () => {
     set({ isLoading: true, error: null });
+
+    if (get().isOffline) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      localStorage.removeItem('ootdash_demo_session');
+      localStorage.removeItem('ootdash_demo_email');
+      set({
+        user: null,
+        session: null,
+        isAuthenticated: false,
+        isLoading: false
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;

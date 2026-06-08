@@ -41,7 +41,7 @@
 
 ## 5. Environment Variables Penting
 - **Server `.env`:** 
-  - `OPENWEATHER_API_KEY`: `e8fa885e53e69c7d070088fe650f1cb1`
+  - `OPENWEATHER_API_KEY`: `your_openweather_api_key_here`
   - `DATABASE_URL`: `postgresql://postgres:postgres@localhost:54322/postgres`
 
 ---

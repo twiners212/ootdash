@@ -27,6 +27,20 @@ export const useDashboardStore = create((set, get) => ({
 
   fetchDashboardData: async (lat, lon) => {
     set({ isLoading: true, error: null });
+
+    // If client is in demo mode (offline), bypass server fetch and load mock data cleanly
+    if (useAuthStore.getState().isOffline) {
+      console.log('[DashboardStore] Client is in demo mode, loading local fallback data.');
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate response latency
+      set({
+        weather: fallbackData.weather,
+        recommendation: fallbackData.recommendation,
+        isLoading: false,
+        lastFetched: new Date().toISOString(),
+      });
+      return;
+    }
+
     try {
       // Get access token from auth store
       const token = useAuthStore.getState().getAccessToken();

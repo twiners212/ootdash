@@ -3,7 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { LogIn, UserPlus, Mail, Lock, ArrowRight, AlertTriangle } from 'lucide-react';
 
 export default function LoginPage() {
-  const { signIn, signUp, isLoading, error, clearError } = useAuthStore();
+  const { signIn, signUp, isLoading, error, clearError, isOffline } = useAuthStore();
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -107,6 +107,14 @@ export default function LoginPage() {
               <UserPlus size={14} /> Daftar
             </button>
           </div>
+
+          {/* Offline Mode Banner */}
+          {isOffline && (
+            <div className="mx-6 mt-4 flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg text-xs font-pixel animate-fade-in-up">
+              <AlertTriangle size={14} className="flex-shrink-0 text-amber-500 animate-pulse" />
+              <span>Demo Mode Aktif (DB Offline)</span>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
