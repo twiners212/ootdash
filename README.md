@@ -1,5 +1,11 @@
 # OOTDash (Outfit of the Day Dashboard)
 
+## 📸 Demo Tampilan Aplikasi
+
+| Halaman Login (Demo Mode) | Halaman Dashboard Utama |
+|:---:|:---:|
+| ![Login Page](docs/screenshots/login.png) | ![Dashboard Page](docs/screenshots/dashboard.png) |
+
 OOTDash adalah dashboard cuaca lokal interaktif yang dilengkapi dengan sistem rekomendasi pakaian menggunakan manekin 2D dinamis bergaya **Retro Pixel-Art**. Aplikasi ini secara cerdas mencocokkan kondisi cuaca dan suhu real-time dengan koleksi baju untuk memberikan rekomendasi gaya harian terbaik bagi pengguna.
 
 ---
