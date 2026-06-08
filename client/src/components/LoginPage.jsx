@@ -41,6 +41,17 @@ export default function LoginPage() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setLocalError('');
+    clearError();
+    const demoEmail = isOffline ? 'demo@ootdash.local' : 'test@ootdash.local';
+    const demoPassword = isOffline ? 'demopassword' : 'test1234';
+    const result = await signIn(demoEmail, demoPassword);
+    if (!result.success) {
+      setLocalError(result.error);
+    }
+  };
+
   const toggleMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
     setLocalError('');
@@ -220,6 +231,32 @@ export default function LoginPage() {
                 </>
               )}
             </button>
+
+            {/* Divider */}
+            {mode === 'login' && (
+              <div className="flex items-center gap-3 my-2 opacity-50">
+                <div className="h-[1px] bg-outline/20 flex-grow" />
+                <span className="font-pixel text-[8px] text-outline/40">atau</span>
+                <div className="h-[1px] bg-outline/20 flex-grow" />
+              </div>
+            )}
+
+            {/* Quick Demo Button */}
+            {mode === 'login' && (
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+                className="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-pixel text-xs uppercase tracking-wider
+                  rounded-lg pixel-border transition-all duration-200 
+                  hover:translate-y-[-2px] hover:shadow-lg hover:shadow-amber-500/30
+                  active:translate-y-[1px] active:shadow-sm
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                  flex items-center justify-center gap-2"
+              >
+                Coba Akun Demo <LogIn size={14} />
+              </button>
+            )}
           </form>
 
           {/* Footer Link */}
