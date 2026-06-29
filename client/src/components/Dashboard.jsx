@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { useAuthStore } from '../store/useAuthStore';
 import useGeolocation from '../hooks/useGeolocation';

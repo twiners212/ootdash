@@ -72,11 +72,82 @@ async function fetchWeather(lat: number, lon: number) {
  * Looks up clothing recommendations from the database based on
  * the user's style profile, current temperature, and weather condition.
  */
+function getLayerImage(category: 'top' | 'bottom' | 'shoes' | 'acc', itemName: string): string {
+  const name = itemName.toLowerCase();
+  
+  if (category === 'top') {
+    if (name.includes('flannel') || name.includes('cardigan') || name.includes('sweater') || name.includes('rajut')) {
+      return '/layers/top_kemeja_flannel.png';
+    }
+    if (name.includes('tebal') || name.includes('parka')) {
+      return '/layers/top_jaket_tebal.png';
+    }
+    if (name.includes('hujan') || name.includes('parasut') || name.includes('windbreaker') || name.includes('track') || name.includes('denim')) {
+      return '/layers/top_jaket_hujan.png';
+    }
+    return '/layers/top_kaos_polos.png';
+  }
+  
+  if (category === 'bottom') {
+    if (name.includes('pendek') || name.includes('shorts') || name.includes('rok')) {
+      return '/layers/bottom_celana_pendek.png';
+    }
+    if (name.includes('tebal') || name.includes('cargo')) {
+      return '/layers/bottom_celana_panjang_tebal.png';
+    }
+    if (name.includes('panjang') || name.includes('jeans') || name.includes('stretch') || name.includes('legging') || name.includes('tights') || name.includes('compression')) {
+      return '/layers/bottom_celana_panjang.png';
+    }
+    return '/layers/bottom_celana_chino.png';
+  }
+  
+  if (category === 'shoes') {
+    if (name.includes('sandal')) {
+      return '/layers/shoes_sandal.png';
+    }
+    if (name.includes('boots') && (name.includes('tinggi') || name.includes('rain'))) {
+      return '/layers/shoes_boots_tinggi.png';
+    }
+    if (name.includes('boots') || name.includes('trail')) {
+      return '/layers/shoes_boots.png';
+    }
+    return '/layers/shoes_sneakers.png';
+  }
+  
+  if (category === 'acc') {
+    if (name.includes('kacamata')) {
+      return '/layers/acc_kacamata.png';
+    }
+    if (name.includes('payung')) {
+      return '/layers/acc_payung.png';
+    }
+    return '/layers/acc_topi.png';
+  }
+  
+  return '';
+}
+
 async function findRecommendation(userId: string, temperature: number, conditionKey: string) {
   // 1. Find user's style profile preference
-  const userPref = await db.query.userPreferences.findFirst({
+  let userPref = await db.query.userPreferences.findFirst({
     where: eq(userPreferences.userId, userId),
   });
+
+  if (!userPref || !userPref.styleProfileId) {
+    // Auto-create default style profile preference if none exists
+    try {
+      const styleProfile = await db.query.styleProfiles.findFirst();
+      if (styleProfile) {
+        const [newPref] = await db.insert(userPreferences).values({
+          userId,
+          styleProfileId: styleProfile.id,
+        }).returning();
+        userPref = newPref;
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] Failed to auto-create user preference:', err);
+    }
+  }
 
   if (!userPref || !userPref.styleProfileId) {
     return null; // User has no style profile set
@@ -106,23 +177,23 @@ async function findRecommendation(userId: string, temperature: number, condition
     top: {
       itemName: rule.topItem,
       note: rule.topNote,
-      layerImage: `/layers/top_${rule.topItem.toLowerCase().replace(/\s+/g, '_')}.png`,
+      layerImage: getLayerImage('top', rule.topItem),
     },
     bottom: {
       itemName: rule.bottomItem,
       note: rule.bottomNote,
-      layerImage: `/layers/bottom_${rule.bottomItem.toLowerCase().replace(/\s+/g, '_')}.png`,
+      layerImage: getLayerImage('bottom', rule.bottomItem),
     },
     shoes: {
       itemName: rule.shoesItem,
       note: rule.shoesNote,
-      layerImage: `/layers/shoes_${rule.shoesItem.toLowerCase().replace(/\s+/g, '_')}.png`,
+      layerImage: getLayerImage('shoes', rule.shoesItem),
     },
     accessories: rule.accItem
       ? {
           itemName: rule.accItem,
           note: rule.accNote || '',
-          layerImage: `/layers/acc_${rule.accItem.toLowerCase().replace(/\s+/g, '_')}.png`,
+          layerImage: getLayerImage('acc', rule.accItem),
         }
       : null,
   };
@@ -150,7 +221,7 @@ const FALLBACK_RECOMMENDATIONS: Record<string, any> = {
   },
   'Badai': {
     top: { itemName: 'Jaket Tebal', note: 'Perlindungan maksimal dari angin kencang', layerImage: '/layers/top_jaket_tebal.png' },
-    bottom: { itemName: 'Celana Panjang Tebal', note: 'Hangat dan melindungi', layerImage: '/layers/bottom_celana_tebal.png' },
+    bottom: { itemName: 'Celana Panjang Tebal', note: 'Hangat dan melindungi', layerImage: '/layers/bottom_celana_panjang_tebal.png' },
     shoes: { itemName: 'Boots Tinggi', note: 'Anti air dan kokoh', layerImage: '/layers/shoes_boots_tinggi.png' },
     accessories: { itemName: 'Payung', note: 'Pastikan payung kuat terhadap angin', layerImage: '/layers/acc_payung.png' },
   },

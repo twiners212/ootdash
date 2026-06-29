@@ -5,8 +5,9 @@ import { getDashboard } from '../controllers/dashboardController.js';
 const router = Router();
 
 /**
- * GET /api/dashboard?lat={x}&lon={y}
- * Protected route — requires a valid Supabase JWT in Authorization header.
+ * GET /api/dashboard
+ * Protected route — requires a valid session via Better Auth.
+ * Accepts ?lat=xxx&lon=yyy for weather data fetching.
  */
 router.get('/dashboard', authMiddleware, getDashboard);
 

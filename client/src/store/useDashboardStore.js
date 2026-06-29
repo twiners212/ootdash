@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { useAuthStore } from './useAuthStore';
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Fallback data used when API is unreachable
 const fallbackData = {
@@ -18,7 +18,7 @@ const fallbackData = {
   }
 };
 
-export const useDashboardStore = create((set, get) => ({
+export const useDashboardStore = create((set) => ({
   weather: null,
   recommendation: null,
   isLoading: false,
@@ -52,6 +52,7 @@ export const useDashboardStore = create((set, get) => ({
 
       const response = await fetch(`${API_BASE}/api/dashboard?lat=${lat}&lon=${lon}`, {
         headers,
+        credentials: 'include',
       });
       
       if (!response.ok) {

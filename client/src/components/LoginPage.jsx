@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { LogIn, UserPlus, Mail, Lock, ArrowRight, AlertTriangle } from 'lucide-react';
 
@@ -275,9 +275,9 @@ export default function LoginPage() {
 
         {/* Version Badge */}
         <div className="text-center mt-6">
-          <span className="font-pixel text-[8px] text-outline/30 uppercase tracking-widest">
-            OOTDash v1.0-alpha • Powered by Supabase
-          </span>
+          <p className="font-pixel text-[8px] text-outline/30 uppercase tracking-widest">
+            OOTDash v1.0-alpha • Powered by Better Auth & Neon
+          </p>
         </div>
       </div>
     </div>

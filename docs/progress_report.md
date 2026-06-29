@@ -10,18 +10,18 @@ OOTDash telah selesai diimplementasikan sebagai **Minimum Viable Product (MVP)**
 
 | Fitur / Modul | Status | Keterangan |
 |---|---|---|
-| **Database Setup** | ✅ Selesai | PostgreSQL berjalan lokal via Supabase Docker CLI. Skema migrasi & data awal berhasil di-seed. |
+| **Database Setup** | ✅ Selesai | PostgreSQL cloud via Neon Database berjalan dengan baik. Skema migrasi & data awal berhasil di-seed. |
 | **Integrasi API** | ✅ Selesai | Hubungan frontend ke backend lancar dengan fallback offline yang elegan jika server/database utama mati. |
 | **Aset Pixel-Art** | ✅ Selesai | 21 aset karakter & pakaian pixel-art dimuat dan ditumpuk secara dinamis menggunakan absolute CSS. |
-| **Aliran Autentikasi** | ✅ Selesai | Login, registrasi, dan sesi pengguna terintegrasi penuh dengan token Bearer JWT Supabase. |
+| **Aliran Autentikasi** | ✅ Selesai | Login, registrasi, dan sesi pengguna terintegrasi penuh menggunakan **Better Auth** via endpoints `/api/auth/*`. |
 | **Deployment Cloud** | ✅ Selesai | Frontend React-Vite telah dideploy di **Vercel** ([https://ootdash.vercel.app/](https://ootdash.vercel.app/)) dan terhubung ke GitHub. |
 
 ---
 
 ## 2. Pencapaian Utama & Keputusan Teknis
 
-### A. Autentikasi Modern (ES256 JWKS)
-Supabase CLI versi terbaru beralih menggunakan algoritma **ES256** (asymmetric ECDSA) untuk enkripsi JWT. Sistem autentikasi pada backend Express dirancang ulang untuk memverifikasi token pengguna secara asinkron lewat endpoint JWKS (`/auth/v1/.well-known/jwks.json`), serta mendukung fallback HS256 untuk kompatibilitas retro.
+### A. Autentikasi Modern (Better Auth)
+Sistem autentikasi pada backend Express diubah dari Supabase Auth menjadi **Better Auth** karena lebih mudah diintegrasikan langsung pada backend Node.js (tanpa harus running container Supabase Auth terpisah). Session di-handle otomatis lewat standard web tokens & cookies yang aman.
 
 ### B. Demo Mode & Simulasi Login Instan (Untuk Perekrut)
 Agar portofolio dapat diuji oleh perekrut tanpa perlu menjalankan Docker/Supabase lokal secara manual, sistem mendeteksi secara otomatis jika database sedang offline, lalu mem-bypass login ke **Demo Mode**. 

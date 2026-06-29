@@ -14,7 +14,7 @@ OOTDash adalah dashboard cuaca lokal interaktif yang dilengkapi dengan sistem re
 
 - **Weather-Based Recommendations**: Menghitung rekomendasi pakaian (atasan, bawahan, sepatu, aksesoris) berdasarkan data suhu dan cuaca real-time dari OpenWeatherMap API.
 - **Dynamic 2D Mannequin**: Manekin bergaya pixel-art yang secara dinamis memuat layer pakaian sesuai dengan rekomendasi sistem.
-- **Robust Local Auth**: Sistem autentikasi pengguna lokal menggunakan Supabase Auth (Docker) dengan middleware verifikasi token berbasis ES256 JWKS di backend.
+- **Robust Local Auth**: Sistem autentikasi pengguna menggunakan Better Auth dengan database PostgreSQL cloud (Neon), terintegrasi penuh di backend.
 - **Responsive Layout**: Desain responsif bergaya retro "Sunny Retro Blue" yang ramah untuk tampilan desktop maupun perangkat mobile.
 - **Offline Graceful Fallback**: Menggunakan data rekomendasi offline bawaan secara otomatis jika server atau API eksternal tidak dapat dihubungi.
 
@@ -24,8 +24,8 @@ OOTDash adalah dashboard cuaca lokal interaktif yang dilengkapi dengan sistem re
 
 - **Frontend**: React (Vite), Tailwind CSS, Zustand (State Management), Lucide React (Icons).
 - **Backend**: Node.js (Express), TypeScript.
-- **Database & ORM**: PostgreSQL (via Supabase Local Docker), Drizzle ORM (Type-Safe Query Builder).
-- **External Integration**: OpenWeatherMap API & Supabase GoTrue Auth.
+- **Database & ORM**: PostgreSQL (Cloud via Neon), Drizzle ORM (Type-Safe Query Builder).
+- **External Integration**: OpenWeatherMap API & Better Auth.
 
 ---
 
@@ -34,13 +34,12 @@ OOTDash adalah dashboard cuaca lokal interaktif yang dilengkapi dengan sistem re
 ```
 ootdash/
 ├── docs/               # Dokumentasi teknis & arsitektur proyek
-├── supabase/           # File konfigurasi dan migrasi database lokal
 ├── client/             # Aplikasi Frontend (React + Vite)
 │   ├── public/         # Aset statis & layer gambar manekin
 │   └── src/
 │       ├── components/ # Komponen UI utama
 │       ├── hooks/      # Custom React hooks (useGeolocation)
-│       ├── lib/        # File konfigurasi library (supabaseClient)
+│       ├── lib/        # File konfigurasi library (auth-client.js)
 │       ├── store/      # State management (Zustand stores)
 │       └── styles/     # Global stylesheets
 └── server/             # Aplikasi Backend (Express TS)
@@ -57,66 +56,50 @@ ootdash/
 
 ### Prasyarat
 - **Node.js** (v18 ke atas)
-- **Docker Desktop** (untuk database Supabase lokal)
 
-### 1. Kloning Repositori
+### 1. Kloning Repositori & Instalasi
+Aplikasi ini menggunakan fitur **npm workspaces** sehingga instalasi dependensi cukup dilakukan di root folder:
 ```bash
 git clone https://github.com/username/ootdash.git
 cd ootdash
+npm install
 ```
 
-### 2. Jalankan Database Lokal (Supabase)
-Pastikan Docker Desktop aktif, lalu jalankan perintah berikut pada direktori root proyek:
-```bash
-npx supabase start
-```
-
-### 3. Setup Backend (Server)
-1. Masuk ke folder server:
+### 2. Konfigurasi Environment (Server)
+1. Buat file `.env` di dalam folder `server/` berdasarkan template `.env.example`:
    ```bash
    cd server
-   ```
-2. Pasang dependensi:
-   ```bash
-   npm install
-   ```
-3. Buat file `.env` berdasarkan template `.env.example`, lalu masukkan API Key OpenWeather Anda:
-   ```bash
    cp .env.example .env
    ```
-4. Sinkronisasikan skema dan isi data awal database:
+2. Isi `DATABASE_URL` dengan credential Neon Anda dan `OPENWEATHER_API_KEY` di file `.env`.
+3. Sinkronisasikan skema dan isi data awal database:
    ```bash
    npm run db:push
    npm run db:seed
    ```
+4. Kembali ke root direktori:
+   ```bash
+   cd ..
+   ```
 
-### 4. Setup Frontend (Client)
-1. Masuk ke folder client:
-   ```bash
-   cd ../client
-   ```
-2. Pasang dependensi:
-   ```bash
-   npm install
-   ```
+### 3. Konfigurasi Environment (Client)
+Aplikasi frontend secara default akan menghubungi backend lokal di port 3000. Jika Anda mendeploy server ke cloud, buat file `.env` di folder `client/`:
+```env
+VITE_API_URL=https://url-backend-anda.com
+```
 
 ---
 
 ## 🏃 Cara Menjalankan Proyek
 
-1. **Jalankan Backend (Express):**
-   Di folder `server/`:
-   ```bash
-   npm run dev
-   ```
-   Server akan berjalan di [http://localhost:3000](http://localhost:3000).
+Berkat **npm workspaces** dan `concurrently`, Anda dapat menjalankan backend dan frontend sekaligus secara pararel cukup dengan satu perintah dari **root direktori**:
 
-2. **Jalankan Frontend (React):**
-   Di folder `client/`:
-   ```bash
-   npm run dev
-   ```
-   Aplikasi client akan berjalan di [http://localhost:5173](http://localhost:5173).
+```bash
+npm run dev
+```
+
+- Server akan berjalan di [http://localhost:3000](http://localhost:3000).
+- Client (React) akan berjalan di [http://localhost:5173](http://localhost:5173).
 
 ---
 

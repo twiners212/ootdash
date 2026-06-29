@@ -3,6 +3,8 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './lib/auth.js';
 import dashboardRoutes from './routes/dashboard.js';
 
 const app = express();
@@ -14,6 +16,9 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+
+// --- Better Auth Route ---
+app.all('/api/auth/*splat', toNodeHandler(auth));
 
 // --- Health Check ---
 app.get('/api/health', (_req, res) => {

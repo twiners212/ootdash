@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 
 // Map weather condition text → outfit image
@@ -84,6 +84,7 @@ export default function Mannequin() {
             src={recommendation.top.layerImage} 
             label={recommendation.top.itemName} 
             color="bg-primary"
+            category="top"
           />
         )}
         {recommendation.bottom && (
@@ -91,6 +92,7 @@ export default function Mannequin() {
             src={recommendation.bottom.layerImage} 
             label={recommendation.bottom.itemName} 
             color="bg-outline"
+            category="bottom"
           />
         )}
         {recommendation.shoes && (
@@ -98,6 +100,7 @@ export default function Mannequin() {
             src={recommendation.shoes.layerImage} 
             label={recommendation.shoes.itemName} 
             color="bg-accent"
+            category="shoes"
           />
         )}
         {recommendation.accessories && (
@@ -105,6 +108,7 @@ export default function Mannequin() {
             src={recommendation.accessories.layerImage} 
             label={recommendation.accessories.itemName} 
             color="bg-primary"
+            category="accessories"
           />
         )}
       </div>
@@ -112,8 +116,15 @@ export default function Mannequin() {
   );
 }
 
+const CATEGORY_EMOJI = {
+  top: '👕',
+  bottom: '👖',
+  shoes: '👟',
+  accessories: '🎒',
+};
+
 /** Small circular item preview bubble */
-function ItemBubble({ src, label, color }) {
+function ItemBubble({ src, label, color, category }) {
   const [hover, setHover] = useState(false);
 
   return (
@@ -141,7 +152,7 @@ function ItemBubble({ src, label, color }) {
           className="w-10 h-10 items-center justify-center text-lg hidden"
           title={label}
         >
-          👕
+          {CATEGORY_EMOJI[category] || '👕'}
         </div>
       </div>
       
@@ -158,18 +169,29 @@ function ItemBubble({ src, label, color }) {
 
 /** Rain particle animation overlay */
 function RainParticles() {
+  const [particles] = useState(() => 
+    Array.from({ length: 20 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `-${Math.random() * 20}px`,
+      height: `${8 + Math.random() * 12}px`,
+      animation: `rain-fall ${0.5 + Math.random() * 0.5}s linear infinite`,
+      animationDelay: `${Math.random() * 1}s`,
+    }))
+  );
+
   return (
     <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-      {Array.from({ length: 20 }).map((_, i) => (
+      {particles.map((p) => (
         <div
-          key={i}
+          key={p.id}
           className="absolute w-[2px] bg-primary/40 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `-${Math.random() * 20}px`,
-            height: `${8 + Math.random() * 12}px`,
-            animation: `rain-fall ${0.5 + Math.random() * 0.5}s linear infinite`,
-            animationDelay: `${Math.random() * 1}s`,
+            left: p.left,
+            top: p.top,
+            height: p.height,
+            animation: p.animation,
+            animationDelay: p.animationDelay,
           }}
         />
       ))}
@@ -179,19 +201,31 @@ function RainParticles() {
 
 /** Storm particle animation overlay */
 function StormParticles() {
+  const [particles] = useState(() => 
+    Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `-${Math.random() * 20}px`,
+      height: `${10 + Math.random() * 16}px`,
+      animation: `rain-fall ${0.3 + Math.random() * 0.4}s linear infinite`,
+      animationDelay: `${Math.random() * 0.8}s`,
+      transform: `rotate(${10 + Math.random() * 10}deg)`,
+    }))
+  );
+
   return (
     <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
-      {Array.from({ length: 30 }).map((_, i) => (
+      {particles.map((p) => (
         <div
-          key={i}
+          key={p.id}
           className="absolute w-[2px] bg-outline/50 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `-${Math.random() * 20}px`,
-            height: `${10 + Math.random() * 16}px`,
-            animation: `rain-fall ${0.3 + Math.random() * 0.4}s linear infinite`,
-            animationDelay: `${Math.random() * 0.8}s`,
-            transform: `rotate(${10 + Math.random() * 10}deg)`,
+            left: p.left,
+            top: p.top,
+            height: p.height,
+            animation: p.animation,
+            animationDelay: p.animationDelay,
+            transform: p.transform,
           }}
         />
       ))}

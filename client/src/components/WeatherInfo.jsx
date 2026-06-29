@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { CloudSun, MapPin } from 'lucide-react';
 

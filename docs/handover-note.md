@@ -1,7 +1,10 @@
 # 📑 Handover Notes: OOTDash Project
+> [!WARNING]
+> **Dokumen ini mengacu pada arsitektur awal (V1) yang menggunakan Supabase Docker Lokal.**
+> Saat ini (V2), proyek telah bermigrasi menggunakan **Better Auth** dan **Neon Database Cloud**. Silakan merujuk ke `README.md` utama untuk instruksi terbaru.
+
 **Tanggal:** 11 Mei 2026  
 **Status Sesi:** Scaffolded (Frontend & Backend Ready, DB & Integration Pending)
-
 ## 1. Konteks Project
 **OOTDash** adalah dashboard cuaca lokal dengan sistem rekomendasi pakaian menggunakan manekin 2D bergaya **Retro Pixel-Art**.
 - **User Goal:** Melihat cuaca saat ini dan mendapatkan saran baju (atas, bawah, sepatu, aksesoris) berdasarkan suhu dan kondisi cuaca.

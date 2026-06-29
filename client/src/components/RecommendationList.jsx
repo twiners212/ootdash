@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { Shirt, BookOpen } from 'lucide-react';
 
