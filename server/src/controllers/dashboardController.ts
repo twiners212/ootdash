@@ -140,7 +140,7 @@ async function findRecommendation(userId: string, temperature: number, condition
       if (styleProfile) {
         const [newPref] = await db.insert(userPreferences).values({
           userId,
-          styleProfileId: styleProfile.id,
+          styleProfileId: styleProfile.id as number,
         }).returning();
         userPref = newPref;
       }
