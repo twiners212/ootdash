@@ -26,5 +26,8 @@
     "@types/pg": "^8.20.0",
     "concurrently": "^10.0.3",
     "typescript": "^5.7.0"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.0.0"
   }
 }
