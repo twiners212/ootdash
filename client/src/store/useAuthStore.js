@@ -19,7 +19,7 @@ export const useAuthStore = create((set, get) => ({
       console.log('[Auth] Checking connection to backend...');
       // Simple connectivity check to backend health endpoint
       const isOnline = await Promise.race([
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/health`)
+        fetch(`${import.meta.env.VITE_API_URL || ''}/api/health`)
           .then((r) => r.ok)
           .catch(() => false),
         new Promise((resolve) => setTimeout(() => resolve(false), 2000))

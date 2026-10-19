@@ -8,7 +8,14 @@ export const auth = betterAuth({
     provider: 'pg',
     schema,
   }),
-  trustedOrigins: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:4173'],
+  trustedOrigins: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:4173',
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    ...(process.env.APP_URL ? [process.env.APP_URL] : []),
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+  ],
   emailAndPassword: {
     enabled: true,
   },
